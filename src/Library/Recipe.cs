@@ -5,13 +5,13 @@
 //-------------------------------------------------------------------------
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Full_GRASP_And_SOLID.Library
 {
     public class Recipe
     {
-        private ArrayList steps = new ArrayList();
+        private IList<Step> steps = new List<Step>();
 
         public Product FinalProduct { get; set; }
 
@@ -25,14 +25,34 @@ namespace Full_GRASP_And_SOLID.Library
             this.steps.Remove(step);
         }
 
-        public void PrintRecipe()
+        // Agregado por SRP
+        public string GetTextToPrint()
         {
-            Console.WriteLine($"Receta de {this.FinalProduct.Description}:");
+            string result = $"Receta de {this.FinalProduct.Description}:\n";
             foreach (Step step in this.steps)
             {
-                Console.WriteLine($"{step.Quantity} de '{step.Input.Description}' " +
-                    $"usando '{step.Equipment.Description}' durante {step.Time}");
+                result = result +
+                    $"{step.Quantity} de '{step.Input.Description}' " +
+                    $"usando '{step.Equipment.Description}' durante {step.Time}\n";
             }
+
+            // Agregado por Expert
+            result = result + $"Costo de producción: {this.GetProductionCost()}";
+
+            return result;
+        }
+
+        // Agregado por Expert
+        public double GetProductionCost()
+        {
+            double result = 0;
+
+            foreach (Step step in this.steps)
+            {
+                result = result + step.GetStepCost();
+            }
+
+            return result;
         }
     }
 }
